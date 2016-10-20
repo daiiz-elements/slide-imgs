@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/image-icons.html">
 
 <dom-module id="slide-imgs">
   <template>
@@ -6,14 +7,57 @@
       :host {
         width: 100%;
         display: block;
+        position: relative;
+        overflow: hidden;
       }
 
       #images {
         display: none;
       }
+
+      #main-image {
+        border: 1px solid #eee;
+        width: 100%;
+        box-sizing: border-box;
+        contain: content;
+      }
+
+      #main-image::after {
+        display: block;
+        content: '';
+        padding-top: 75%; /* 4:3 = height is 75% of width */
+      }
+
+      #main-image img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      
+      #controller {
+        text-align: center;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        color: #fff;
+        width: 100%;
+        padding: 4px;
+        box-sizing: border-box;
+        background-color: #000;
+        opacity: 0.7;
+        display: none;
+      }
     </style>
 
     <h2>Hello</h2>
+    <div id="main-image" on-mouseenter="_showController" on-mouseleave="_hideController">
+      <img id="r" src="#">
+      <div id="controller">
+        <paper-icon-button on-click="prev" noink icon="image:navigate-before"></paper-icon-button>
+        <paper-icon-button noink icon="view-module"></paper-icon-button>
+        <paper-icon-button on-click="next" noink icon="image:navigate-next"></paper-icon-button>
+      </div>
+    </div>
     <div>note</div>
     <div id="images">
       <content id="c"></content>
@@ -56,11 +100,15 @@
       },
 
       attached: function () {
-
+        // 最初のページを表示
+        var total = this.getTotalPages();
+        if (total > 0) {
+          this._render(0);
+        }
       },
 
       _pageChanged: function (newValue, oldValue) {
-        this._render(newValue);
+        this._render();
       },
 
       _noteChanged: function () {
@@ -79,16 +127,37 @@
         this.innerHTML = '';
       },
 
-      _render: function (pageNum) {
+      /* page属性で指定されているページを表示 */
+      _render: function () {
+        var pageNum = +this.getPage();
         if (pageNum === undefined || pageNum.length === 0) return;
         var p = +pageNum;
-        if (p < 0) return;
+        if (p < 0) {
+          this.page = 0;
+          return;
+        }
         var total = this.getTotalPages();
-        if (p >= total) return;
+        if (p >= total) {
+          this.page = p - 1;
+          return;
+        }
+
+        var src = this.getContentChildren('#c')[pageNum].dataset.src;
+        this.$.r.src = src || '';
       },
 
       _updateList: function () {
+        console.info(9999)
+      },
 
+      _showController: function () {
+        var ctr = this.$.controller;
+        ctr.style.display = 'block';
+      },
+
+      _hideController: function () {
+        var ctr = this.$.controller;
+        ctr.style.display = 'none';
       },
 
       /* ページ一覧表の表示を切り替え */
@@ -99,16 +168,18 @@
       /* ページ送り */
       next: function () {
         var now = this.getPage();
+        this.page = now + 1;
       },
       
       /* ページ戻し */
       prev: function () {
         var now = this.getPage();
+        this.page = now - 1;
       },
       
       /* 現在のページ位置取得 */
       getPage: function () {
-        return this.page || 0;
+        return +this.page || 0;
       },
 
       /* 合計ページ数取得 */
