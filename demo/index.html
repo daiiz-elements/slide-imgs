@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>slide-imgs demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <script>
+      /* this script must run before Polymer is imported */
+      window.Polymer = {
+        dom: 'shadow',
+        lazyRegister: true
+      };
+    </script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../slide-imgs.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic slide-imgs Demo</h3>
+      <demo-snippet>
+        <template>
+          <slide-imgs>
+            <img data-src="">
+            <img data-src="">
+          </slide-imgs>
+        </template>
+      </demo-snippet>
+    </div>
+
+    <script>
+      var s;
+      window.addEventListener('WebComponentsReady', function () {
+        var slideImgs = document.querySelectorAll('slide-imgs');
+
+        var slideImg = slideImgs[0];
+        s = slideImg;
+        console.info(slideImg.getTotalPages());
+      }, false);
+    </script>
+  </body>
+</html>

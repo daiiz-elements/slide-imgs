@@ -1,0 +1,71 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="slide-imgs">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        display: block;
+      }
+    </style>
+
+    <h2>Hello [[prop1]]</h2>
+    <div>
+      <content id="c"></content>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'slide-imgs',
+
+      properties: {
+        /* コンテンツid */
+        cid: {
+          type: String,
+          value: ''
+        },
+
+        /* 表示するページ番号 */
+        page: {
+          type: Number,
+          value: 0
+        },
+
+        /* 表示スタイルモード */
+        mode: {
+          type: String,
+          value: 'large'
+        }
+      },
+
+      /* ページ送り */
+      next: function () {
+
+      },
+      
+      /* ページ戻し */
+      prev: function () {
+        
+      },
+      
+      /* 現在のページ位置取得 */
+      getPage: function () {
+        return this.page || 0;
+      },
+
+      /* 合計ページ数取得 */
+      getTotalPages: function () {
+        return this.getContentChildren('#c').length;
+      },
+
+      /* 新規ページを末尾に追加 */
+      appendPageImg: function (src) {
+        var img = document.createElement('img');
+        img.dataset.src = src || '';
+        this.appendChild(img);
+      }
+    });
+  </script>
+</dom-module>
