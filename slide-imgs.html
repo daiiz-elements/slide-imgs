@@ -47,6 +47,41 @@
         opacity: 0.7;
         display: none;
       }
+
+      #list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 30%;
+        height: 100%;
+        background-color: #555;
+        box-sizing: border-box;
+        padding: 4px;
+        overflow-y: auto;
+        display: none;
+      }
+
+      .l {
+        position: relative;
+        width: 100%;
+        margin-bottom: 4px;
+      }
+
+      .l img {
+        position: absolute;
+        border: 0px;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        contain: content;
+        cursor: pointer;
+      }
+
+      .l::after {
+        display: block;
+        content: '';
+        padding-top: 75%;
+      }
     </style>
 
     <h2>Hello</h2>
@@ -54,9 +89,10 @@
       <img id="r" src="#">
       <div id="controller">
         <paper-icon-button on-click="prev" noink icon="image:navigate-before"></paper-icon-button>
-        <paper-icon-button noink icon="view-module"></paper-icon-button>
+        <paper-icon-button on-click="toggleList" noink icon="view-module"></paper-icon-button>
         <paper-icon-button on-click="next" noink icon="image:navigate-next"></paper-icon-button>
       </div>
+      <div id="list"></div>
     </div>
     <div>note</div>
     <div id="images">
@@ -105,6 +141,7 @@
         if (total > 0) {
           this._render(0);
         }
+        this._bindEvents();
       },
 
       _pageChanged: function (newValue, oldValue) {
@@ -147,27 +184,53 @@
       },
 
       _updateList: function () {
-        console.info(9999)
+        var imgs = this.getContentChildren('#c');
+        this.$.list.innerHTML = '';
+        for (var i = 0; i < imgs.length; i++) {
+          var src = imgs[i].dataset.src;
+          var div = document.createElement('div');
+          div.className = 'l';
+          var img = document.createElement('img');
+          img.src = src;
+          img.dataset.page = i;
+          div.appendChild(img);
+          this.$.list.appendChild(div);
+        }
       },
 
       _showController: function () {
-        var ctr = this.$.controller;
-        ctr.style.display = 'block';
+        this.$.controller.style.display = 'block';
       },
 
       _hideController: function () {
-        var ctr = this.$.controller;
-        ctr.style.display = 'none';
+        this.$.controller.style.display = 'none';
+      },
+
+      _bindEvents: function () {
+        var self = this;
+
+        // リストからページを選択
+        this.$.list.addEventListener('click', function (e) {
+          var page = +e.target.dataset.page;
+          self.page = page;
+        }, false);
       },
 
       /* ページ一覧表の表示を切り替え */
-      toggleList: function (update) {
-        if (update === undefined) update = false;
+      toggleList: function () {
+        this._updateList();
+        var li = this.$.list;
+        if (li.style.display === 'block') {
+          li.style.display = 'none';
+        }else {
+          li.style.display = 'block';
+        }
       },
 
       /* ページ送り */
       next: function () {
         var now = this.getPage();
+        this.$.list.style.display = 'none';
         this.page = now + 1;
       },
       
