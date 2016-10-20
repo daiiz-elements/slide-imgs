@@ -7,10 +7,15 @@
         width: 100%;
         display: block;
       }
+
+      #images {
+        display: none;
+      }
     </style>
 
-    <h2>Hello [[prop1]]</h2>
-    <div>
+    <h2>Hello</h2>
+    <div>note</div>
+    <div id="images">
       <content id="c"></content>
     </div>
   </template>
@@ -24,7 +29,8 @@
         /* コンテンツid */
         cid: {
           type: String,
-          value: ''
+          value: '',
+          observer: '_cidChanged'
         },
 
         /* 表示するページ番号 */
@@ -34,17 +40,11 @@
           observer: '_pageChanged'
         },
 
-        /* 表示スタイルモード */
-        mode: {
-          type: String,
-          value: 'large',
-          observer: '_modeChanged'
-        },
-
         /* 状態の自動保存 */
         autosave: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '_autosaveChanged'
         },
 
         /* メモ欄の表示 */
@@ -63,11 +63,15 @@
         this._render(newValue);
       },
 
-      _modeChanged: function () {
+      _noteChanged: function () {
 
       },
 
-      _noteChanged: function () {
+      _cidChanged: function () {
+
+      },
+
+      _autosaveChanged: function () {
 
       },
 
@@ -83,8 +87,13 @@
         if (p >= total) return;
       },
 
-      _renderList: function () {
+      _updateList: function () {
 
+      },
+
+      /* ページ一覧表の表示を切り替え */
+      toggleList: function (update) {
+        if (update === undefined) update = false;
       },
 
       /* ページ送り */
@@ -94,7 +103,7 @@
       
       /* ページ戻し */
       prev: function () {
-        
+        var now = this.getPage();
       },
       
       /* 現在のページ位置取得 */
