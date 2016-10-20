@@ -67,6 +67,14 @@
         margin-bottom: 4px;
       }
 
+      .lx {
+        opacity: 0.3;
+      }
+
+      .lo {
+        opacity: 1.0;
+      }
+
       .l img {
         position: absolute;
         border: 0px;
@@ -189,7 +197,10 @@
         for (var i = 0; i < imgs.length; i++) {
           var src = imgs[i].dataset.src;
           var div = document.createElement('div');
-          div.className = 'l';
+          div.className = 'l lx';
+          if (i === this.page) {
+            div.className = 'l lo';
+          }
           var img = document.createElement('img');
           img.src = src;
           img.dataset.page = i;
@@ -212,6 +223,14 @@
         // リストからページを選択
         this.$.list.addEventListener('click', function (e) {
           var page = +e.target.dataset.page;
+          var items = self.$.list.querySelectorAll('div.l');
+          for (var i = 0; i < items.length; i++) {
+            if (i === page) {
+              items[i].className = 'l lo';
+            }else {
+              items[i].className = 'l lx';
+            }
+          }
           self.page = page;
         }, false);
       },
