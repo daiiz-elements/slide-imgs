@@ -59,8 +59,8 @@
 
       },
 
-      _pageChanged: function () {
-
+      _pageChanged: function (newValue, oldValue) {
+        this._render(newValue);
       },
 
       _modeChanged: function () {
@@ -71,9 +71,25 @@
 
       },
 
+      _removeAllPageImgs: function () {
+        this.innerHTML = '';
+      },
+
+      _render: function (pageNum) {
+        if (pageNum === undefined || pageNum.length === 0) return;
+        var p = +pageNum;
+        if (p < 0) return;
+        var total = this.getTotalPages();
+        if (p >= total) return;
+      },
+
+      _renderList: function () {
+
+      },
+
       /* ページ送り */
       next: function () {
-
+        var now = this.getPage();
       },
       
       /* ページ戻し */
@@ -96,6 +112,19 @@
         var img = document.createElement('img');
         img.dataset.src = src || '';
         this.appendChild(img);
+      },
+
+      /* ページリストを設定 */
+      appendPageImgs: function (srcList, overwrite) {
+        srcList = srcList || [];
+        if (overwrite === undefined) overwrite = false;
+        if (overwrite) {
+          this._removeAllPageImgs();
+        }
+        for (var i = 0; i < srcList.length; i++) {
+          var src = srcList[i];
+          this.appendPageImg(src);
+        }
       }
     });
   </script>
