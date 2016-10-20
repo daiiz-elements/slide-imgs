@@ -30,14 +30,45 @@
         /* 表示するページ番号 */
         page: {
           type: Number,
-          value: 0
+          value: 0,
+          observer: '_pageChanged'
         },
 
         /* 表示スタイルモード */
         mode: {
           type: String,
-          value: 'large'
+          value: 'large',
+          observer: '_modeChanged'
+        },
+
+        /* 状態の自動保存 */
+        autosave: {
+          type: Boolean,
+          value: false
+        },
+
+        /* メモ欄の表示 */
+        note: {
+          type: Boolean,
+          value: false,
+          observer: '_noteChanged'
         }
+      },
+
+      attached: function () {
+
+      },
+
+      _pageChanged: function () {
+
+      },
+
+      _modeChanged: function () {
+
+      },
+
+      _noteChanged: function () {
+
       },
 
       /* ページ送り */
