@@ -1,5 +1,6 @@
 {
   "name": "slide-imgs",
+  "version": "1.0,0",
   "main": "slide-imgs.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",

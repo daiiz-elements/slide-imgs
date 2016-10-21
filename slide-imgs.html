@@ -16,10 +16,11 @@
       }
 
       #main-image {
-        border: 1px solid #eee;
         width: 100%;
         box-sizing: border-box;
         contain: content;
+        border: 1px solid #ddd;
+        border-bottom: 0px;
       }
 
       #main-image::after {
@@ -39,11 +40,11 @@
         position: absolute;
         left: 0;
         bottom: 0;
-        color: #fff;
+        color: #000;
         width: 100%;
         padding: 4px;
         box-sizing: border-box;
-        background-color: #000;
+        background-color: #fff;
         opacity: 0.7;
         display: none;
       }
@@ -90,19 +91,38 @@
         content: '';
         padding-top: 75%;
       }
+
+      #noteBtn {
+        position: absolute;
+        right: 0;
+      }
+
+      #note {
+        font-size: 10pt;
+        padding: 4px;
+        position: relative;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-top: 0px;
+        width: 100%;
+        max-width: 100%;
+        outline: none;
+      }
     </style>
 
-    <h2>Hello</h2>
     <div id="main-image" on-mouseenter="_showController" on-mouseleave="_hideController">
       <img id="r" src="#">
       <div id="controller">
         <paper-icon-button on-click="prev" noink icon="image:navigate-before"></paper-icon-button>
-        <paper-icon-button on-click="toggleList" noink icon="view-module"></paper-icon-button>
+        <paper-icon-button id="listBtn" on-click="toggleList" noink icon="view-module"></paper-icon-button>
         <paper-icon-button on-click="next" noink icon="image:navigate-next"></paper-icon-button>
+        <paper-icon-button on-click="_toggleNote" noink icon="image:edit" id="noteBtn"></paper-icon-button>
       </div>
       <div id="list"></div>
     </div>
-    <div>note</div>
+    <div id="noteArea">
+      <textarea id="note" placeholder="Note..."></textarea>
+    </div>
     <div id="images">
       <content id="c"></content>
     </div>
@@ -114,13 +134,6 @@
       is: 'slide-imgs',
 
       properties: {
-        /* コンテンツid */
-        cid: {
-          type: String,
-          value: '',
-          observer: '_cidChanged'
-        },
-
         /* 表示するページ番号 */
         page: {
           type: Number,
@@ -128,18 +141,17 @@
           observer: '_pageChanged'
         },
 
-        /* 状態の自動保存 */
-        autosave: {
-          type: Boolean,
-          value: false,
-          observer: '_autosaveChanged'
+        /* メモ欄の表示とローカル保存キー指定 */
+        note: {
+          type: String,
+          value: '',
+          observer: '_noteChanged'
         },
 
-        /* メモ欄の表示 */
-        note: {
+        /* サムネイルリストを表示 */
+        list: {
           type: Boolean,
-          value: false,
-          observer: '_noteChanged'
+          value: false
         }
       },
 
@@ -157,19 +169,19 @@
       },
 
       _noteChanged: function () {
-
-      },
-
-      _cidChanged: function () {
-
-      },
-
-      _autosaveChanged: function () {
-
       },
 
       _removeAllPageImgs: function () {
         this.innerHTML = '';
+      },
+
+      _toggleNote: function () {
+        var note = this.$.note;
+        if (note.style.display === 'none') {
+          note.style.display = 'block';
+        }else {
+          note.style.display = 'none';
+        }
       },
 
       /* page属性で指定されているページを表示 */
@@ -189,6 +201,7 @@
 
         var src = this.getContentChildren('#c')[pageNum].dataset.src;
         this.$.r.src = src || '';
+        this.fire('pageChanged', {page: pageNum});
       },
 
       _updateList: function () {
@@ -210,6 +223,10 @@
       },
 
       _showController: function () {
+        // メモを保存
+        if (this.note.length > 0) {
+          localStorage['slide-imgs--' + this.note] = this.$.note.value;
+        }
         this.$.controller.style.display = 'block';
       },
 
@@ -219,6 +236,16 @@
 
       _bindEvents: function () {
         var self = this;
+
+        if (!self.list) this.$.listBtn.remove();
+        if (self.note.length === 0) {
+          this.$.noteBtn.style.display = 'none';
+          this.$.noteArea.style.display = 'none';
+        }else {
+          // 保存されているメモがあれば復元
+          var keptNote = localStorage['slide-imgs--' + this.note];
+          if (keptNote) this.$.note.value = keptNote;
+        }
 
         // リストからページを選択
         this.$.list.addEventListener('click', function (e) {
@@ -237,6 +264,7 @@
 
       /* ページ一覧表の表示を切り替え */
       toggleList: function () {
+        if (!this.list) return;
         this._updateList();
         var li = this.$.list;
         if (li.style.display === 'block') {

@@ -31,8 +31,7 @@
       <h3>Basic slide-imgs Demo</h3>
       <demo-snippet>
         <template>
-          <slide-imgs>
-            <!-- Lazy-load Images -->
+          <slide-imgs list note="demo1">
             <img data-src="https://app-layout-assets.appspot.com/assets/bg1.jpg">
             <img data-src="https://app-layout-assets.appspot.com/assets/bg2.jpg">
             <img data-src="https://app-layout-assets.appspot.com/assets/bg3.jpg">
@@ -50,6 +49,10 @@
         var slideImg = slideImgs[0];
         s = slideImg;
         console.info(slideImg.getTotalPages());
+      }, false);
+
+      window.addEventListener('pageChanged', function (e) {
+        console.info("pageChanged", e.detail.page);
       }, false);
     </script>
   </body>
